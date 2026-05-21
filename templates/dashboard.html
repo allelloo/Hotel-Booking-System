@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p style="color:var(--gold);font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.25rem">Admin Panel</p>
+            <h2 class="section-title">Dashboard</h2>
+            <div class="divider"></div>
+        </div>
+        <a href="{{ url_for('admin.add_room') }}" class="btn btn-gold">
+            <i class="fa fa-plus me-2"></i>Add Room
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card p-4" style="border-left:3px solid var(--gold)">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="background:rgba(201,169,110,0.15);padding:1rem;border-radius:10px">
+                        <i class="fa fa-bed fa-lg" style="color:var(--gold)"></i>
+                    </div>
+                    <div>
+                        <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold)">{{ total_rooms }}</div>
+                        <div class="text-muted small">Total Rooms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4" style="border-left:3px solid #0dcaf0">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="background:rgba(13,202,240,0.15);padding:1rem;border-radius:10px">
+                        <i class="fa fa-calendar-check fa-lg" style="color:#0dcaf0"></i>
+                    </div>
+                    <div>
+                        <div style="font-family:'Playfair Display',serif;font-size:2rem;color:#0dcaf0">{{ total_bookings }}</div>
+                        <div class="text-muted small">Total Bookings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4" style="border-left:3px solid #75dd9c">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="background:rgba(25,135,84,0.15);padding:1rem;border-radius:10px">
+                        <i class="fa fa-users fa-lg" style="color:#75dd9c"></i>
+                    </div>
+                    <div>
+                        <div style="font-family:'Playfair Display',serif;font-size:2rem;color:#75dd9c">{{ total_users }}</div>
+                        <div class="text-muted small">Total Customers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5">
+        <div class="p-4" style="border-bottom:1px solid rgba(201,169,110,0.1)">
+            <h5 style="font-family:'Playfair Display',serif;margin:0">Room Management</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0" style="color:#E8E8F0">
+                <thead style="background:rgba(201,169,110,0.08)">
+                    <tr style="font-size:0.8rem;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase">
+                        <th class="px-4 py-3">Room</th>
+                        <th class="py-3">Type</th>
+                        <th class="py-3">Price</th>
+                        <th class="py-3">Capacity</th>
+                        <th class="py-3">Status</th>
+                        <th class="py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr style="border-color:rgba(201,169,110,0.08)">
+                        <td class="px-4 py-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ room.image }}" style="width:50px;height:40px;object-fit:cover;border-radius:6px"
+                                     onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600'">
+                                <strong>#{{ room.room_number }}</strong>
+                            </div>
+                        </td>
+                        <td class="py-3">{{ room.room_type }}</td>
+                        <td class="py-3" style="color:var(--gold)">${{ "%.0f"|format(room.price) }}</td>
+                        <td class="py-3"><i class="fa fa-users me-1 text-muted"></i>{{ room.capacity }}</td>
+                        <td class="py-3">
+                            <span class="badge badge-{{ room.status }} rounded-pill px-3">{{ room.status.capitalize() }}</span>
+                        </td>
+                        <td class="py-3">
+                            <a href="{{ url_for('admin.edit_room', room_id=room.id) }}" class="btn btn-sm btn-outline-gold me-1">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('admin.delete_room', room_id=room.id) }}" method="POST" style="display:inline">
+                                <button type="submit" style="background:rgba(220,53,69,0.15);color:#f88;border:1px solid rgba(220,53,69,0.3)" class="btn btn-sm" onclick="return confirm('Delete room {{ room.room_number }}?')">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center py-4 text-muted">No rooms found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="p-4" style="border-bottom:1px solid rgba(201,169,110,0.1)">
+            <h5 style="font-family:'Playfair Display',serif;margin:0">Recent Bookings</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0" style="color:#E8E8F0">
+                <thead style="background:rgba(201,169,110,0.08)">
+                    <tr style="font-size:0.8rem;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase">
+                        <th class="px-4 py-3">ID</th>
+                        <th class="py-3">Customer</th>
+                        <th class="py-3">Room</th>
+                        <th class="py-3">Check-In</th>
+                        <th class="py-3">Check-Out</th>
+                        <th class="py-3">Total</th>
+                        <th class="py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings %}
+                    <tr style="border-color:rgba(201,169,110,0.08)">
+                        <td class="px-4 py-3 text-muted">#{{ booking.id }}</td>
+                        <td class="py-3">{{ booking.user.username }}</td>
+                        <td class="py-3">Room {{ booking.room.room_number }}</td>
+                        <td class="py-3">{{ booking.check_in.strftime('%b %d') }}</td>
+                        <td class="py-3">{{ booking.check_out.strftime('%b %d, %Y') }}</td>
+                        <td class="py-3" style="color:var(--gold)">${{ "%.0f"|format(booking.total_price) }}</td>
+                        <td class="py-3">
+                            <span class="badge badge-{{ booking.status }} rounded-pill px-3">{{ booking.status.capitalize() }}</span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center py-4 text-muted">No bookings yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

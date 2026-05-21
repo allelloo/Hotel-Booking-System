@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Room {{ room.room_number }} — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb" style="background:none;padding:0;">
+            <li class="breadcrumb-item"><a href="{{ url_for('public.home') }}" style="color:var(--gold)">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('public.rooms') }}" style="color:var(--gold)">Rooms</a></li>
+            <li class="breadcrumb-item active text-muted">Room {{ room.room_number }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(201,169,110,0.15)">
+                <img src="{{ room.image }}" class="w-100" style="height:420px;object-fit:cover;"
+                     alt="{{ room.room_type }}"
+                     onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600'">
+            </div>
+            <div class="row g-2 mt-2">
+                <div class="col-4">
+                    <div style="background:var(--dark-card);border:1px solid rgba(201,169,110,0.1);border-radius:8px;padding:1rem;text-align:center">
+                        <i class="fa fa-users mb-2" style="color:var(--gold)"></i>
+                        <div style="font-size:0.85rem;color:#aaa">Capacity</div>
+                        <div style="font-weight:600">{{ room.capacity }} Guests</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="background:var(--dark-card);border:1px solid rgba(201,169,110,0.1);border-radius:8px;padding:1rem;text-align:center">
+                        <i class="fa fa-door-open mb-2" style="color:var(--gold)"></i>
+                        <div style="font-size:0.85rem;color:#aaa">Type</div>
+                        <div style="font-weight:600">{{ room.room_type }}</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="background:var(--dark-card);border:1px solid rgba(201,169,110,0.1);border-radius:8px;padding:1rem;text-align:center">
+                        <i class="fa fa-tag mb-2" style="color:var(--gold)"></i>
+                        <div style="font-size:0.85rem;color:#aaa">Price</div>
+                        <div style="font-weight:600">${{ "%.0f"|format(room.price) }}/night</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <span class="badge badge-{{ room.status }} rounded-pill px-3 py-2">{{ room.status.capitalize() }}</span>
+                <small class="text-muted">Room #{{ room.room_number }}</small>
+            </div>
+            <h2 style="font-family:'Playfair Display',serif;color:#fff;margin-bottom:0.5rem">
+                {{ room.room_type }} Room
+            </h2>
+            <p style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:1rem">
+                ${{ "%.2f"|format(room.price) }} <small style="font-size:1rem;color:#aaa">/ night</small>
+            </p>
+            <div class="divider mb-3"></div>
+            <p class="text-muted" style="line-height:1.8">{{ room.description }}</p>
+
+            <div class="mt-4 mb-4">
+                <h6 style="color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;font-size:0.8rem">Amenities</h6>
+                <div class="row g-2 mt-2">
+                    {% for icon, label in [('fa-wifi','Free WiFi'),('fa-snowflake','Air Conditioning'),('fa-tv','Smart TV'),('fa-coffee','Coffee Maker'),('fa-bath','Private Bathroom'),('fa-concierge-bell','Room Service')] %}
+                    <div class="col-6">
+                        <span style="font-size:0.85rem;color:#ccc">
+                            <i class="fa {{ icon }} me-2" style="color:var(--gold)"></i>{{ label }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if room.status == 'available' %}
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('customer.book', room_id=room.id) }}" class="btn btn-gold btn-lg w-100">
+                        <i class="fa fa-calendar-check me-2"></i>Book This Room
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-gold btn-lg w-100">
+                        <i class="fa fa-sign-in-alt me-2"></i>Login to Book
+                    </a>
+                {% endif %}
+            {% else %}
+                <button class="btn btn-lg w-100 disabled" style="background:rgba(220,53,69,0.2);color:#f88;border:1px solid rgba(220,53,69,0.3)">
+                    <i class="fa fa-times-circle me-2"></i>Currently Unavailable
+                </button>
+            {% endif %}
+
+            <a href="{{ url_for('public.rooms') }}" class="btn btn-outline-gold w-100 mt-2">
+                <i class="fa fa-arrow-left me-2"></i>Back to Rooms
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p style="color:var(--gold);font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.25rem">Account</p>
+            <h2 class="section-title">My <span>Bookings</span></h2>
+            <div class="divider"></div>
+        </div>
+        <a href="{{ url_for('public.rooms') }}" class="btn btn-gold">
+            <i class="fa fa-plus me-2"></i>Book a Room
+        </a>
+    </div>
+
+    {% if bookings %}
+    <div class="row g-4">
+        {% for booking in bookings %}
+        <div class="col-12">
+            <div class="card p-0">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <img src="{{ booking.room.image }}" class="w-100 h-100" style="object-fit:cover;min-height:150px;border-radius:10px 0 0 10px"
+                             onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600'">
+                    </div>
+                    <div class="col-md-9 p-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                            <div>
+                                <h5 class="mb-0">Room {{ booking.room.room_number }} — {{ booking.room.room_type }}</h5>
+                                <small class="text-muted">Booking #{{ booking.id }} &bull; {{ booking.created_at.strftime('%b %d, %Y') }}</small>
+                            </div>
+                            <span class="badge badge-{{ booking.status }} rounded-pill px-3 py-2">
+                                {% if booking.status == 'confirmed' %}<i class="fa fa-check-circle me-1"></i>
+                                {% elif booking.status == 'cancelled' %}<i class="fa fa-times-circle me-1"></i>
+                                {% else %}<i class="fa fa-clock me-1"></i>{% endif %}
+                                {{ booking.status.capitalize() }}
+                            </span>
+                        </div>
+                        <hr style="border-color:rgba(201,169,110,0.1);margin:1rem 0">
+                        <div class="row g-3">
+                            <div class="col-sm-3">
+                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Check-In</div>
+                                <div style="font-weight:600">{{ booking.check_in.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Check-Out</div>
+                                <div style="font-weight:600">{{ booking.check_out.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Nights</div>
+                                <div style="font-weight:600">{{ (booking.check_out - booking.check_in).days }}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Total</div>
+                                <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem">${{ "%.2f"|format(booking.total_price) }}</div>
+                            </div>
+                        </div>
+                        {% if booking.status != 'cancelled' %}
+                        <div class="mt-3">
+                           <form action="{{ url_for('customer.cancel_booking', booking_id=booking.id) }}" method="POST">
+                                <button type="submit" class="btn btn-sm" style="background:rgba(220,53,69,0.15);color:#f88;border:1px solid rgba(220,53,69,0.3);font-size:0.82rem">
+                                    <i class="fa fa-times me-1"></i> Cancel Booking
+                                </button>
+                           </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fa fa-calendar-times fa-3x mb-3" style="color:var(--text-muted)"></i>
+        <h5 class="text-muted">No bookings yet</h5>
+        <p class="text-muted">Start exploring our rooms and make your first booking.</p>
+        <a href="{{ url_for('public.rooms') }}" class="btn btn-gold mt-2">
+            <i class="fa fa-bed me-2"></i>Browse Rooms
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Edit Room {{ room.room_number }} — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-gold btn-sm"><i class="fa fa-arrow-left"></i></a>
+                <div>
+                    <h3 class="mb-0" style="font-family:'Playfair Display',serif">Edit Room #{{ room.room_number }}</h3>
+                    <small class="text-muted">Update room details</small>
+                </div>
+            </div>
+            <div class="card p-4 p-md-5">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Room Number *</label>
+                            <input type="text" name="room_number" class="form-control" value="{{ room.room_number }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Room Type *</label>
+                            <select name="room_type" class="form-select" required>
+                                {% for t in ['Single','Double','Suite','Deluxe','Presidential'] %}
+                                <option value="{{ t }}" {% if room.room_type == t %}selected{% endif %}>{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Price Per Night ($) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="background:var(--surface);border:1px solid rgba(201,169,110,0.2);border-right:none;color:var(--gold)">$</span>
+                                <input type="number" name="price" class="form-control" style="border-left:none" value="{{ room.price }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Capacity (Guests) *</label>
+                            <input type="number" name="capacity" class="form-control" value="{{ room.capacity }}" min="1" max="20" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="available" {% if room.status == 'available' %}selected{% endif %}>Available</option>
+                                <option value="booked" {% if room.status == 'booked' %}selected{% endif %}>Booked</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" name="image" class="form-control" value="{{ room.image }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ room.description }}</textarea>
+                        </div>
+                        <div class="col-12 mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-gold flex-fill py-2">
+                                <i class="fa fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-gold px-4">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

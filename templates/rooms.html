@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Rooms — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <p style="color:var(--gold);font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;">Available Rooms</p>
+            <h2 class="section-title">Our <span>Rooms</span></h2>
+            <div class="divider"></div>
+        </div>
+        <div class="col-md-6">
+            <form method="GET" action="{{ url_for('public.rooms') }}" class="d-flex gap-2">
+                <div class="input-group">
+                    <span class="input-group-text" style="background:var(--surface);border:1px solid rgba(201,169,110,0.2);color:var(--gold)">
+                        <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" name="type" class="form-control"
+                           placeholder="Search by room type (Single, Double, Suite...)"
+                           value="{{ search_type }}">
+                </div>
+                <button type="submit" class="btn btn-gold px-3">Search</button>
+                {% if search_type %}
+                <a href="{{ url_for('public.rooms') }}" class="btn btn-outline-gold px-3">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {% if search_type %}
+    <p class="text-muted mb-4">Showing results for: <strong style="color:var(--gold)">{{ search_type }}</strong></p>
+    {% endif %}
+
+    {% if rooms %}
+    <div class="row g-4">
+        {% for room in rooms %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100" style="transition:transform 0.3s,box-shadow 0.3s;"
+                 onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 20px 40px rgba(0,0,0,0.4)'"
+                 onmouseout="this.style.transform='';this.style.boxShadow=''">
+                <div class="position-relative">
+                    <img src="{{ room.image }}" class="card-img-top" alt="{{ room.room_type }}" style="height:220px;object-fit:cover;"
+                         onerror="this.src='https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600'">
+                    <span class="position-absolute top-0 end-0 m-3 badge badge-{{ room.status }} rounded-pill px-3 py-2">
+                        {{ room.status.capitalize() }}
+                    </span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="mb-0">Room {{ room.room_number }}</h5>
+                            <small style="color:var(--gold)">{{ room.room_type }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.3rem">${{ "%.0f"|format(room.price) }}</div>
+                            <small class="text-muted">/night</small>
+                        </div>
+                    </div>
+                    <p class="text-muted small flex-grow-1">{{ room.description[:100] }}{% if room.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex gap-3 mt-2 mb-3">
+                        <span style="font-size:0.82rem;color:#aaa"><i class="fa fa-users me-1" style="color:var(--gold)"></i>{{ room.capacity }} guests</span>
+                        <span style="font-size:0.82rem;color:#aaa"><i class="fa fa-wifi me-1" style="color:var(--gold)"></i>WiFi</span>
+                        <span style="font-size:0.82rem;color:#aaa"><i class="fa fa-snowflake me-1" style="color:var(--gold)"></i>A/C</span>
+                    </div>
+                    <a href="{{ url_for('public.room_details', room_id=room.id) }}" class="btn btn-outline-gold w-100">
+                        View & Book
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fa fa-bed fa-3x mb-3" style="color:var(--text-muted)"></i>
+        <h5 class="text-muted">No rooms found</h5>
+        <p class="text-muted">Try a different search term.</p>
+        <a href="{{ url_for('public.rooms') }}" class="btn btn-outline-gold mt-2">Show All Rooms</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

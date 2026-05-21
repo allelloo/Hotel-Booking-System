@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Add Room — LuxeStay{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-gold btn-sm"><i class="fa fa-arrow-left"></i></a>
+                <div>
+                    <h3 class="mb-0" style="font-family:'Playfair Display',serif">Add New Room</h3>
+                    <small class="text-muted">Fill in the details below</small>
+                </div>
+            </div>
+            <div class="card p-4 p-md-5">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Room Number *</label>
+                            <input type="text" name="room_number" class="form-control" placeholder="e.g. 101" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Room Type *</label>
+                            <select name="room_type" class="form-select" required>
+                                <option value="">Select type...</option>
+                                <option value="Single">Single</option>
+                                <option value="Double">Double</option>
+                                <option value="Suite">Suite</option>
+                                <option value="Deluxe">Deluxe</option>
+                                <option value="Presidential">Presidential</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Price Per Night ($) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="background:var(--surface);border:1px solid rgba(201,169,110,0.2);border-right:none;color:var(--gold)">$</span>
+                                <input type="number" name="price" class="form-control" style="border-left:none" placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Capacity (Guests) *</label>
+                            <input type="number" name="capacity" class="form-control" placeholder="e.g. 2" min="1" max="20" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Describe the room..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" name="image" class="form-control" placeholder="https://... (leave blank for default)">
+                        </div>
+                        <div class="col-12 mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-gold flex-fill py-2">
+                                <i class="fa fa-plus me-2"></i>Add Room
+                            </button>
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-gold px-4">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
